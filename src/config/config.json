@@ -1,0 +1,56 @@
+{
+    "BASE_URL": "http://192.168.72.74:8080/",
+    "Team": {
+        "FindById": "team/get",
+        "FindAll": "team/all",
+        "Add": "team/add",
+        "Edit": "team/edit",
+        "Delete": "team/delete"
+    },
+    "Category": {
+        "FindById": "category/get",
+        "FindAll": "category/all",
+        "Add": "category/add",
+        "Edit": "category/edit",
+        "Delete": "category/delete"
+    },
+    "Match": {
+        "FindById": "match/get",
+        "FindAll": "match/all",
+        "Add": "match/add",
+        "Edit": "match/edit",
+        "Delete": "match/delete",
+        "UpcomingMatch": "match/upcoming-match",
+        "UpcomingMatchGroupedByCategory": "match/upcoming-match/grouped-by-cartegory",
+        "OutDatedMatchGroupedByCategory": "match/getOutDatedMatchGroupedByCategory",
+        "GetAllMatchId": "match/getAllMatchId",
+        "GetLatestMatchResult": "match/getLatestMatchResult"
+    },
+    "BetType": {
+        "FindById": "betType/get",
+        "FindAll": "betType/all",
+        "Add": "betType/add",
+        "Edit": "betType/edit",
+        "Delete": "betType/delete"
+    },
+    "Bet": {
+        "FindById": "bet/get",
+        "FindAll": "bet/all",
+        "FindByUser": "bet/findByUser",
+        "FindByUserAndCategory": "bet/findByUserAndCategory",
+        "Add": "bet/add",
+        "Edit": "bet/edit",
+        "Delete": "bet/delete"
+    },
+    "User": {
+        "FindById": "user/get",
+        "FindAll": "user/all",
+        "Add": "user/add",
+        "Edit": "user/edit",
+        "Delete": "user/delete"
+    },
+    "Authentification": {
+        "Login": "authentification/login",
+        "Registration": "authentification/registration"
+    }
+}
