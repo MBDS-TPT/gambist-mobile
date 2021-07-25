@@ -13,10 +13,13 @@ import { SearchBar } from "../components/searchbar/SearchBar";
 import { Bet, Category } from "../models/Model";
 import { BetService } from "../services/bet/bet.service";
 import { CategoryService } from "../services/category/category.service";
+import { useNavigation } from "../utils/useNavigation";
 
 export const BetsScreen = () => {
   const [betslist, setBetsList] = useState<Bet[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const { navigate } = useNavigation();
 
   const getAllCategories = () => {
     CategoryService.getCategories()
@@ -45,8 +48,20 @@ export const BetsScreen = () => {
     }
   };
 
+  const goToBetDetailsPage = (item: Bet) => {
+    try {
+      navigate("BetDetailsPage", { betitem: item });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.navigationtitle}>
+        <Text style={styles.maintextTitle}>Gambist</Text>
+        <Text style={styles.textTitle}>Vos paris</Text>
+      </View>
       <View style={styles.navigation}>
         <View style={styles.categoriesdiv}>
           <ScrollView>
@@ -91,11 +106,7 @@ export const BetsScreen = () => {
             renderItem={({ item, index }) => (
               <BetCard
                 item={item}
-                onTap={() => {
-                  alert(
-                    item.id + " with the value of " + item.betValue.toString()
-                  );
-                }}
+                onTap={goToBetDetailsPage}
                 keynumber={index}
               />
             )}
@@ -111,25 +122,37 @@ export const BetsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: "#DDDDDD",
+  },
+  navigationtitle: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#DDDDDD",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 40,
+    marginLeft: 20,
+    marginRight: 20,
   },
   navigation: {
     flex: 1,
-    backgroundColor: "red",
+    backgroundColor: "#DDDDDD",
   },
   categoriesdiv: {
     flex: 1,
     backgroundColor: "white",
   },
   body: {
-    flex: 9,
+    flex: 7,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    width: "100%",
   },
   betsdiv: {
     flex: 8,
     backgroundColor: "white",
+    width: "100%",
   },
   button: {
     alignItems: "center",
@@ -144,5 +167,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "white",
+  },
+  textTitle: {
+    fontSize: 25,
+    textAlign: "center",
+  },
+  maintextTitle: {
+    fontSize: 25,
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });

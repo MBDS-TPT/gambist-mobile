@@ -31,7 +31,7 @@ export const LoginScreen = () => {
             .then(() => {
               AsyncStorage.setItem("userName", res.data.username)
                 .then(() => {
-                  navigate("homeStack");
+                  navigate("homeStack", { islogin: true });
                 })
                 .catch((error) => {
                   setErrorMessage(error + "");
@@ -76,7 +76,7 @@ export const LoginScreen = () => {
 
   const onLoginWithCache = () => {
     try {
-      navigate("homeStack");
+      navigate("homeStack", { islogin: true });
     } catch (error) {
       alert(error);
     }

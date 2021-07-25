@@ -18,12 +18,17 @@ import { MatchService } from "../services/match/match.service";
 import { useNavigation } from "../utils/useNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const HomeScreen = () => {
+interface HomeProps {
+  navigation: { getParam: Function };
+}
+
+const HomeScreen: React.FC<HomeProps> = (props) => {
   const { navigate } = useNavigation();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [matcheslist, setMatchesList] = useState<Match[]>([]);
+  const { getParam } = props.navigation;
 
   const getAllCategories = () => {
     CategoryService.getCategories()
@@ -72,15 +77,35 @@ export const HomeScreen = () => {
     }
   };
 
+  const goToSearchPage = () => {
+    try {
+      navigate("SearchPage");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const goToMatchDetailsPage = (item: Match) => {
+    try {
+      navigate("MatchDetailsPage", { matchitem: item });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getUserName();
   }, []);
 
   return (
     <View style={styles.container}>
+      <View style={styles.navigationtitle}>
+        <Text style={styles.maintextTitle}>Gambist</Text>
+        <Text style={styles.textTitle}>Les matches</Text>
+      </View>
       <View style={styles.navigation}>
         <View style={styles.searchdiv}>
-          <SearchBar onTextChange={() => {}} />
+          <SearchBar didTouch={goToSearchPage} onTextChange={() => {}} />
         </View>
         <View style={styles.categoriesdiv}>
           <ScrollView>
@@ -125,16 +150,7 @@ export const HomeScreen = () => {
             renderItem={({ item, index }) => (
               <MatchCard
                 item={item}
-                onTap={() => {
-                  alert(
-                    item.id +
-                      " is the id and " +
-                      item.teamA?.name +
-                      " is the team A and " +
-                      item.teamB?.name +
-                      " is the team B"
-                  );
-                }}
+                onTap={goToMatchDetailsPage}
                 keynumber={index}
               />
             )}
@@ -152,7 +168,17 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: "#DDDDDD",
+  },
+  navigationtitle: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#DDDDDD",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 40,
+    marginLeft: 20,
+    marginRight: 20,
   },
   navigation: {
     flex: 2,
@@ -161,20 +187,24 @@ const styles = StyleSheet.create({
   searchdiv: {
     flex: 1,
     backgroundColor: "white",
+    borderBottomWidth: 3,
+    borderBottomColor: "#DDDDDD",
   },
   categoriesdiv: {
     flex: 1,
     backgroundColor: "white",
   },
   body: {
-    flex: 9,
+    flex: 6,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    width: "100%",
   },
   matchesdiv: {
     flex: 8,
     backgroundColor: "white",
+    width: "100%",
   },
   button: {
     alignItems: "center",
@@ -190,4 +220,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "white",
   },
+  textTitle: {
+    fontSize: 25,
+    textAlign: "center",
+  },
+  maintextTitle: {
+    fontSize: 25,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
 });
+
+export { HomeScreen };

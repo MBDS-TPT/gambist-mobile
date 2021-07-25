@@ -12,6 +12,9 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { BetsScreen } from "./src/screens/BetsScreen";
 import { QrScreen } from "./src/screens/QrScreen";
+import { MatchDetailsScreen } from "./src/screens/MatchDetailsScreen";
+import { SearchScreen } from "./src/screens/SearchScreen";
+import { BetDetailsScreen } from "./src/screens/BetDetailsScreen";
 
 const switchNavigator = createSwitchNavigator({
   loginStack: {
@@ -27,10 +30,22 @@ const switchNavigator = createSwitchNavigator({
     ),
   },
   homeStack: createBottomTabNavigator({
-    home: {
-      screen: createStackNavigator({
-        HomePage: HomeScreen,
-      }),
+    MATCH: {
+      screen: createStackNavigator(
+        {
+          HomePage: HomeScreen,
+          SearchPage: SearchScreen,
+          MatchDetailsPage: {
+            screen: MatchDetailsScreen,
+            navigationOptions: {},
+          },
+        },
+        {
+          defaultNavigationOptions: {
+            headerShown: false,
+          },
+        }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon =
@@ -41,10 +56,18 @@ const switchNavigator = createSwitchNavigator({
         },
       },
     },
-    bets: {
-      screen: createStackNavigator({
-        BetsPage: BetsScreen,
-      }),
+    PARI: {
+      screen: createStackNavigator(
+        {
+          BetsPage: BetsScreen,
+          BetDetailsPage: BetDetailsScreen,
+        },
+        {
+          defaultNavigationOptions: {
+            headerShown: false,
+          },
+        }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon =
@@ -55,10 +78,17 @@ const switchNavigator = createSwitchNavigator({
         },
       },
     },
-    qrCode: {
-      screen: createStackNavigator({
-        QrPage: QrScreen,
-      }),
+    QRCODE: {
+      screen: createStackNavigator(
+        {
+          QrPage: QrScreen,
+        },
+        {
+          defaultNavigationOptions: {
+            headerShown: false,
+          },
+        }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon =
