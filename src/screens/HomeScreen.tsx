@@ -158,9 +158,6 @@ const HomeScreen: React.FC<HomeProps> = (props) => {
           />
         </View>
       </View>
-      <View style={styles.footer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
     </View>
   );
 };
@@ -195,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    flex: 6,
+    flex: 7,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
@@ -210,10 +207,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#DDDDDD",
     padding: 10,
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: "cyan",
   },
   buttontestdiv: {
     flex: 1,

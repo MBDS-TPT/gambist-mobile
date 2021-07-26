@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   imagecontainer: {
     flex: 1,
     flexDirection: "row",
+    backgroundColor: "black",
   },
   infocontainer: {
     flex: 1,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   image: {
-    height: 150,
+    height: 200,
     width: "100%",
   },
   button: {

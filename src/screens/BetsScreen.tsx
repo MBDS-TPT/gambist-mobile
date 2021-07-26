@@ -114,7 +114,6 @@ export const BetsScreen = () => {
           />
         </View>
       </View>
-      <View style={styles.footer}></View>
     </View>
   );
 };
@@ -143,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    flex: 7,
+    flex: 8,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
@@ -158,10 +157,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#DDDDDD",
     padding: 10,
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: "cyan",
   },
   buttontestdiv: {
     flex: 1,

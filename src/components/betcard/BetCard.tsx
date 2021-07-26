@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Bet } from "../../models/Model";
+import Moment from "moment";
 
 interface BetCardProps {
   item: Bet;
@@ -22,6 +23,7 @@ const BetCard: React.FC<BetCardProps> = ({ item, onTap, keynumber }) => {
   const imageB = {
     uri: item.match?.teamB?.logo,
   };
+  const dateFormatted = Moment(item.betDate).format("DD-MM-YYYY");
   return (
     <View style={styles.container}>
       <View style={styles.imagecontainer}>
@@ -43,7 +45,7 @@ const BetCard: React.FC<BetCardProps> = ({ item, onTap, keynumber }) => {
       <View style={styles.infocontainer}>
         <View>
           <View style={styles.titlecontainer}>
-            <Text style={styles.text}>Pari du {item.betDate}</Text>
+            <Text style={styles.text}>Pari du {dateFormatted}</Text>
             <Text style={styles.text}>{item.match?.category?.label}</Text>
           </View>
           <Text style={styles.text}>
@@ -71,6 +73,7 @@ const styles = StyleSheet.create({
   imagecontainer: {
     flex: 1,
     flexDirection: "row",
+    backgroundColor: "black",
   },
   infocontainer: {
     flex: 1,
@@ -83,14 +86,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   image: {
-    height: 150,
+    height: 200,
     width: "100%",
   },
   titlecontainer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginRight: 10,
+    marginRight: 20,
+    marginLeft: 20,
   },
   button: {
     alignItems: "flex-end",
