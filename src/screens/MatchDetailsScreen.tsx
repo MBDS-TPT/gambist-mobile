@@ -7,9 +7,11 @@ import {
   TouchableHighlight,
   ImageBackground,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { Match } from "../models/Model";
 import Moment from "moment";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 interface MatchDetailsProps {
   navigation: { getParam: Function; goBack: Function };
@@ -20,7 +22,6 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
 
   const matchitem = getParam("matchitem") as Match;
 
-  console.log(matchitem);
   const imageA = {
     uri: matchitem.teamA?.logo,
   };
@@ -31,13 +32,97 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
   const coteTeamA = matchitem.oddsA?.toFixed(2);
   const coteTeamB = matchitem.oddsB?.toFixed(2);
   const coteMatchNul = matchitem.oddsNul?.toFixed(2);
+
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "first", title: "Info du match" },
+    { key: "second", title: "Faire un pari" },
+  ]);
+
+  const FirstRoute = () => (
+    <ScrollView>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Catégorie du sport: </Text>
+        <Text style={styles.contentDescription}>
+          {matchitem.category?.label}
+        </Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Date et heure du match: </Text>
+        <Text style={styles.contentDescription}>{dateFormatted}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>
+          Côte de victoire {matchitem.teamA?.name} :{" "}
+        </Text>
+        <Text style={styles.contentDescription}>{coteTeamA}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>
+          Côte de victoire {matchitem.teamB?.name} :{" "}
+        </Text>
+        <Text style={styles.contentDescription}>{coteTeamB}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Côte match nul: </Text>
+        <Text style={styles.contentDescription}>{coteMatchNul}</Text>
+      </View>
+    </ScrollView>
+  );
+
+  const SecondRoute = () => (
+    <ScrollView>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Catégorie du sport: </Text>
+        <Text style={styles.contentDescription}>
+          {matchitem.category?.label}
+        </Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Date et heure du match: </Text>
+        <Text style={styles.contentDescription}>{dateFormatted}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>
+          Côte de victoire {matchitem.teamA?.name} :{" "}
+        </Text>
+        <Text style={styles.contentDescription}>{coteTeamA}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>
+          Côte de victoire {matchitem.teamB?.name} :{" "}
+        </Text>
+        <Text style={styles.contentDescription}>{coteTeamB}</Text>
+      </View>
+      <View style={styles.contentcontainer}>
+        <Text style={styles.contentTitle}>Côte match nul: </Text>
+        <Text style={styles.contentDescription}>{coteMatchNul}</Text>
+      </View>
+    </ScrollView>
+  );
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+  });
+
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: "white" }}
+      style={{ backgroundColor: "black" }}
+      labelStyle={{ fontWeight: "bold" }}
+    />
+  );
   return (
     <View style={styles.container}>
       <View style={styles.navigationtitle}>
         <TouchableOpacity onPress={() => goBack()}>
-          <Text style={styles.maintextTitle}>&lt; Retour</Text>
+          <Text style={styles.textTitle}>&lt; Retour</Text>
         </TouchableOpacity>
-        <Text style={styles.textTitle}>Détail du match</Text>
+        <Text style={styles.maintextTitle}>Détail du match</Text>
       </View>
       <View style={styles.body}>
         <View style={styles.bodyimagecontainer}>
@@ -58,68 +143,16 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
         </View>
         <View style={styles.bodytextcontainer}>
           <Text style={styles.maintextTitle}>{matchitem.teamA?.name}</Text>
-          <Text style={styles.maintextTitle}>VS</Text>
+          <Text style={styles.textTitle}>VS</Text>
           <Text style={styles.maintextTitle}>{matchitem.teamB?.name}</Text>
-          <ScrollView>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentSubTitle}>Info du match </Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Catégorie du sport: </Text>
-              <Text style={styles.contentDescription}>
-                {matchitem.category?.label}
-              </Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Date et heure du match: </Text>
-              <Text style={styles.contentDescription}>{dateFormatted}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>
-                Côte de victoire {matchitem.teamA?.name} :{" "}
-              </Text>
-              <Text style={styles.contentDescription}>{coteTeamA}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>
-                Côte de victoire {matchitem.teamB?.name} :{" "}
-              </Text>
-              <Text style={styles.contentDescription}>{coteTeamB}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Côte match nul: </Text>
-              <Text style={styles.contentDescription}>{coteMatchNul}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentSubTitle}>Formulaire de pari </Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Catégorie du sport: </Text>
-              <Text style={styles.contentDescription}>
-                {matchitem.category?.label}
-              </Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Date et heure du match: </Text>
-              <Text style={styles.contentDescription}>{dateFormatted}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>
-                Côte de victoire {matchitem.teamA?.name} :{" "}
-              </Text>
-              <Text style={styles.contentDescription}>{coteTeamA}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>
-                Côte de victoire {matchitem.teamB?.name} :{" "}
-              </Text>
-              <Text style={styles.contentDescription}>{coteTeamB}</Text>
-            </View>
-            <View style={styles.contentcontainer}>
-              <Text style={styles.contentTitle}>Côte match nul: </Text>
-              <Text style={styles.contentDescription}>{coteMatchNul}</Text>
-            </View>
-          </ScrollView>
+          <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={{ width: layout.width }}
+            renderTabBar={renderTabBar}
+            style={{ marginTop: 20 }}
+          />
         </View>
       </View>
     </View>
@@ -169,7 +202,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   textTitle: {
-    fontSize: 25,
+    fontSize: 17,
     textAlign: "center",
   },
   maintextTitle: {
