@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableHighlight,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import { Bet } from "../../models/Model";
 
 interface BetCardProps {
@@ -9,16 +16,48 @@ interface BetCardProps {
 }
 
 const BetCard: React.FC<BetCardProps> = ({ item, onTap, keynumber }) => {
+  const imageA = {
+    uri: item.match?.teamA?.logo,
+  };
+  const imageB = {
+    uri: item.match?.teamB?.logo,
+  };
   return (
     <View style={styles.container}>
-      <Text key={keynumber}>
-        {item.betValue} parié le {item.betDate}
-      </Text>
-      <TouchableHighlight onPress={() => onTap(item)}>
-        <View style={styles.button}>
-          <Text>Voir Détails</Text>
+      <View style={styles.imagecontainer}>
+        <View style={styles.imagecontainer}>
+          <ImageBackground
+            source={imageA}
+            resizeMode="cover"
+            style={styles.image}
+          />
         </View>
-      </TouchableHighlight>
+        <View style={styles.imagecontainer}>
+          <ImageBackground
+            source={imageB}
+            resizeMode="cover"
+            style={styles.image}
+          />
+        </View>
+      </View>
+      <View style={styles.infocontainer}>
+        <View>
+          <View style={styles.titlecontainer}>
+            <Text style={styles.text}>Pari du {item.betDate}</Text>
+            <Text style={styles.text}>{item.match?.category?.label}</Text>
+          </View>
+          <Text style={styles.text}>
+            {item.match?.teamA?.name} vs {item.match?.teamB?.name}
+          </Text>
+        </View>
+        <View style={styles.buttoncontainer}>
+          <TouchableOpacity onPress={() => onTap(item)}>
+            <View style={styles.button}>
+              <Text style={styles.textlink}>Voir Détails &gt;</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -26,12 +65,47 @@ const BetCard: React.FC<BetCardProps> = ({ item, onTap, keynumber }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "yellow",
+    flexDirection: "column",
+    marginBottom: 15,
+  },
+  imagecontainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  infocontainer: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  buttoncontainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginRight: 10,
+  },
+  image: {
+    height: 150,
+    width: "100%",
+  },
+  titlecontainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginRight: 10,
   },
   button: {
-    alignItems: "center",
+    alignItems: "flex-end",
     backgroundColor: "white",
     padding: 10,
+    width: "100%",
+  },
+  textlink: {
+    color: "blue",
+  },
+  text: {
+    color: "black",
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
