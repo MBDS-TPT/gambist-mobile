@@ -53,7 +53,7 @@ export interface User {
 }
 
 export interface Bet {
-    id: string;
+    id?: string;
     betValue: number;
     winningRate?: number;
     betDate: any;

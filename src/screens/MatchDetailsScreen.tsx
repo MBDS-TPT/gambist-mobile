@@ -12,10 +12,12 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import { Match } from "../models/Model";
+import { Bet, Match } from "../models/Model";
 import Moment from "moment";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import RNPickerSelect from "react-native-picker-select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BetService } from "../services/bet/bet.service";
 
 interface MatchDetailsProps {
   navigation: { getParam: Function; goBack: Function };
@@ -26,6 +28,8 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
   const [valueBet, setValueBet] = useState<string>("");
   const [winnerTeam, setWinnerTeam] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [oddChosed, setOddChosed] = useState<string>();
+  const [winnings, setWinnings] = useState<string>();
 
   const matchitem = getParam("matchitem") as Match;
 
@@ -50,23 +54,78 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
 
   const convertValueBet = (e: any) => {
     if (e.nativeEvent.text === "") {
+      setValueBet("");
       setErrorMessage("Remplir le champs Montant que vous pariez Pari");
     } else {
       const valBetinteger = parseInt(e.nativeEvent.text);
-      setValueBet(valBetinteger.toString());
+      if (valBetinteger.toString() === "NaN") {
+        setValueBet("");
+        setErrorMessage("Remplir le champs Montant que vous pariez Pari");
+      } else {
+        const valWinning =
+          valBetinteger * Number.parseFloat(oddChosed ? oddChosed : "0");
+        setWinnings(valWinning.toFixed(2));
+        setValueBet(valBetinteger.toString());
+        setErrorMessage(undefined);
+      }
     }
   };
 
-  const makeBet = () => {
-    if (valueBet === "") {
-      setErrorMessage("Remplir le champs Montant que vous pariez Pari");
-    } else if (winnerTeam === "") {
-      setErrorMessage("Veuillez choisir un résultat pour le match");
+  const chooseWinnerTeam = (team: any) => {
+    setWinnerTeam(team);
+    if (team === "A") {
+      setOddChosed(coteTeamA);
+    } else if (team === "B") {
+      setOddChosed(coteTeamB);
     } else {
-      setErrorMessage(undefined);
-      console.log(valueBet);
-      console.log(winnerTeam);
-      console.log(Number.isInteger(valueBet));
+      setOddChosed(coteMatchNul);
+    }
+    setErrorMessage(undefined);
+    setWinnings(undefined);
+    setValueBet("");
+  };
+
+  const makeBet = async () => {
+    try {
+      if (winnerTeam === "" || winnerTeam == null) {
+        setErrorMessage("Veuillez choisir un résultat pour le match");
+      } else if (valueBet === "") {
+        setErrorMessage("Remplir le champs Montant que vous pariez Pari");
+      } else {
+        setErrorMessage(undefined);
+        const userId = await AsyncStorage.getItem("userId");
+        const bet: Bet = {
+          betDate: new Date(),
+          betValue: Number.parseInt(valueBet),
+          matchId: matchitem.id,
+          userId: userId,
+        };
+        if (winnerTeam === "A") {
+          bet.teamId = matchitem.teamA?.id;
+          bet.odds = matchitem.oddsA;
+        } else if (winnerTeam === "B") {
+          bet.teamId = matchitem.teamB?.id;
+          bet.odds = matchitem.oddsB;
+        }
+
+        BetService.postBet(bet).then((res) => {
+          if (res.result !== "KO") {
+            Alert.alert(
+              "Pari enregistré",
+              "Votre pari a bien été enregistré! Vous pourrez le voir en rafraichissant la page de vos pari (draggez l'écran vers le bas)",
+              [{ text: "OK", onPress: () => goBack() }]
+            );
+          } else {
+            setErrorMessage("Erreur survenue:" + res.message);
+          }
+        });
+        console.log(bet);
+        console.log(valueBet);
+        console.log(winnerTeam);
+        console.log(Number.isInteger(valueBet));
+      }
+    } catch (error) {
+      setErrorMessage("Erreur: " + error);
     }
   };
 
@@ -103,8 +162,25 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
 
   const SecondRoute = () => (
     <ScrollView>
+      {winnerTeam != "" && winnerTeam != null ? (
+        <View>
+          <Text>Saisissez votre mise (uniquement un nombre entier)</Text>
+          <Text>(Côte de votre choix: {oddChosed})</Text>
+          {winnings != null && winnings != "" && (
+            <Text>(Votre gain sera de: {winnings})</Text>
+          )}
+        </View>
+      ) : (
+        <View>
+          <Text>Choisissez le gagnant du match</Text>
+          <Text>(Vos gains seront calculés de la manière suivante:</Text>
+          <Text>Valeur de votre mise x Côte)</Text>
+        </View>
+      )}
       <RNPickerSelect
-        onValueChange={(value) => setWinnerTeam(value)}
+        onValueChange={(value) => {
+          chooseWinnerTeam(value);
+        }}
         style={pickerSelectStyles}
         placeholder={{
           label: "Choisissez le gagnant du match:",
@@ -123,13 +199,17 @@ const MatchDetailsScreen: React.FC<MatchDetailsProps> = (props) => {
         ]}
         value={winnerTeam}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Login email"
-        keyboardType="numeric"
-        onSubmitEditing={(e) => convertValueBet(e)}
-        defaultValue={valueBet}
-      />
+
+      {winnerTeam != "" && winnerTeam != null && (
+        <TextInput
+          style={styles.input}
+          placeholder="Mise de votre pari"
+          keyboardType="numeric"
+          onSubmitEditing={(e) => convertValueBet(e)}
+          defaultValue={valueBet}
+        />
+      )}
+
       {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
       <TouchableOpacity onPress={() => makeBet()} style={styles.button}>
         <View>

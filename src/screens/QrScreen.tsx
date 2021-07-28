@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MatchService } from "../services/match/match.service";
 import { Match } from "../models/Model";
+import { useNavigation } from "../utils/useNavigation";
 
 export const QrScreen = () => {
   const [hasPermission, setHasPermission] = useState<any>(null);
@@ -11,6 +12,7 @@ export const QrScreen = () => {
     "Aucun QR code scanné pour le moment. Scannez le QR code d'un match pour accéder à sa page détail"
   );
   const [matchScanned, setMatchScanned] = useState<Match>();
+  const { navigate } = useNavigation();
 
   const askForCameraPermission = () => {
     (async () => {
@@ -25,9 +27,7 @@ export const QrScreen = () => {
       if (data.includes("/match/get?id=")) {
         const idMatch = data.split("get?id=")[1];
         setText(
-          "Le détail du match " +
-            idMatch +
-            " est chargé. Toucher le bouton pour scanner un nouveau match."
+          "Le détail du match est chargé. Toucher le bouton pour scanner un nouveau match."
         );
         console.log(
           `Bar code with type ${type} and data ${data} has been scanned!`
@@ -56,6 +56,10 @@ export const QrScreen = () => {
     setScanned(isScanned);
     setText("Scannez le QR code d'un match pour accéder à sa page détail");
     setMatchScanned(undefined);
+  };
+
+  const goToMatchDetailsScanned = () => {
+    navigate("MatchDetailsPage", { matchitem: matchScanned });
   };
 
   useEffect(() => {
@@ -115,7 +119,7 @@ export const QrScreen = () => {
         <Text style={styles.textScanned}>{text}</Text>
         {matchScanned && (
           <TouchableOpacity
-            onPress={() => resetTextScanned(false)}
+            onPress={goToMatchDetailsScanned}
             style={styles.button}
           >
             <View>
