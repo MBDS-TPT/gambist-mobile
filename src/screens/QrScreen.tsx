@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { MatchService } from "../services/match/match.service";
+import { Match } from "../models/Model";
 
 export const QrScreen = () => {
   const [hasPermission, setHasPermission] = useState<any>(null);
@@ -8,6 +10,7 @@ export const QrScreen = () => {
   const [text, setText] = useState(
     "Aucun QR code scanné pour le moment. Scannez le QR code d'un match pour accéder à sa page détail"
   );
+  const [matchScanned, setMatchScanned] = useState<Match>();
 
   const askForCameraPermission = () => {
     (async () => {
@@ -18,10 +21,41 @@ export const QrScreen = () => {
 
   const handleBarCodeScanned = (type: any, data: any) => {
     setScanned(true);
-    setText(data);
-    console.log(
-      `Bar code with type ${type} and data ${data} has been scanned!`
-    );
+    if (typeof data == "string") {
+      if (data.includes("/match/get?id=")) {
+        const idMatch = data.split("get?id=")[1];
+        setText(
+          "Le détail du match " +
+            idMatch +
+            " est chargé. Toucher le bouton pour scanner un nouveau match."
+        );
+        console.log(
+          `Bar code with type ${type} and data ${data} has been scanned!`
+        );
+        console.log(`Un match est scanne!`);
+        MatchService.getMatch(idMatch)
+          .then((data) => {
+            console.log(data);
+            setMatchScanned(data);
+          })
+          .catch((error) => {
+            setText("Une erreur est survenue: " + error);
+          });
+      } else {
+        console.log(
+          `Bar code with type ${type} and data ${data} has been scanned!`
+        );
+        const stringErrorScan =
+          "Veuillez scanner un QR Code de Match provenant de Gambist";
+        setText(stringErrorScan);
+      }
+    }
+  };
+
+  const resetTextScanned = (isScanned: boolean) => {
+    setScanned(isScanned);
+    setText("Scannez le QR code d'un match pour accéder à sa page détail");
+    setMatchScanned(undefined);
   };
 
   useEffect(() => {
@@ -79,13 +113,23 @@ export const QrScreen = () => {
       </View>
       <View style={styles.bodyTextAndButton}>
         <Text style={styles.textScanned}>{text}</Text>
-        {scanned && (
+        {matchScanned && (
           <TouchableOpacity
-            onPress={() => setScanned(false)}
+            onPress={() => resetTextScanned(false)}
             style={styles.button}
           >
             <View>
-              <Text>Tap to Scan Again</Text>
+              <Text>Accéder au détail du match</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        {scanned && (
+          <TouchableOpacity
+            onPress={() => resetTextScanned(false)}
+            style={styles.button}
+          >
+            <View>
+              <Text>Toucher pour scanner une nouvelle fois</Text>
             </View>
           </TouchableOpacity>
         )}

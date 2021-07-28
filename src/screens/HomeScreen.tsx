@@ -105,7 +105,7 @@ const HomeScreen: React.FC<HomeProps> = (props) => {
       </View>
       <View style={styles.navigation}>
         <View style={styles.searchdiv}>
-          <SearchBar didTouch={goToSearchPage} onTextChange={() => {}} />
+          <SearchBar didTouch={() => {}} onTextChange={() => {}} />
         </View>
         <View style={styles.categoriesdiv}>
           <ScrollView>
