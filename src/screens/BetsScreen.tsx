@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   TouchableHighlight,
+  RefreshControl,
 } from "react-native";
 import { BetCard } from "../components/betcard/BetCard";
 import { CategoryButton } from "../components/button/CategoryButton";
@@ -18,6 +19,21 @@ import { useNavigation } from "../utils/useNavigation";
 export const BetsScreen = () => {
   const [betslist, setBetsList] = useState<Bet[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    try {
+      setRefreshing(true);
+      BetService.getUserBets()
+        .then((data) => {
+          setBetsList(data);
+          setRefreshing(false);
+        })
+        .catch((error) => alert(error));
+    } catch (error) {
+      alert(error);
+    }
+  }, []);
 
   const { navigate } = useNavigation();
 
@@ -111,6 +127,9 @@ export const BetsScreen = () => {
               />
             )}
             keyExtractor={(item, index) => index.toString()}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
         </View>
       </View>
